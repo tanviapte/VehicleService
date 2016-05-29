@@ -1,6 +1,7 @@
 package com.tanviprojects.codingchallenge.vehicleservice.resources;
 
-import com.tanviprojects.codingchallenge.vehicleservice.protocol.json.Vehicle;
+import com.tanviprojects.codingchallenge.vehicleservice.protocol.ArrayOfVehiclesXml;
+import com.tanviprojects.codingchallenge.vehicleservice.protocol.VehicleJson;
 import com.tanviprojects.codingchallenge.vehicleservice.repository.IVehicleRepository;
 
 import javax.ws.rs.GET;
@@ -20,9 +21,15 @@ public class VehicleResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Vehicle> getall() {
+    public List<VehicleJson> getAllJson() {
         return repository.getAll().stream().map(
-            vehicle -> new Vehicle(vehicle.getId(), vehicle.getYear(), vehicle.getMake(), vehicle.getModel())
+            vehicle -> new VehicleJson(vehicle.getId(), vehicle.getYear(), vehicle.getMake(), vehicle.getModel())
         ).collect(Collectors.toList());
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_XML)
+    public ArrayOfVehiclesXml getAllXml() {
+        return new ArrayOfVehiclesXml(repository.getAll());
     }
 }

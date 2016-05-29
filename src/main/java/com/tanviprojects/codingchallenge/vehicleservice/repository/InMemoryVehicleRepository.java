@@ -2,35 +2,46 @@ package com.tanviprojects.codingchallenge.vehicleservice.repository;
 
 import com.tanviprojects.codingchallenge.vehicleservice.model.Vehicle;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentMap;
 
 public class InMemoryVehicleRepository implements IVehicleRepository {
-    private Vehicle v;
+    private ConcurrentMap<Integer,Vehicle> vehicles;
+    private static int currentId = 0;
 
-    public InMemoryVehicleRepository() {
-        v = new Vehicle(1, 1990, "abc", "abc");
+    public InMemoryVehicleRepository(ConcurrentMap<Integer, Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 
     public Vehicle get(int id) {
-        return v;
+        return vehicles.get(id);
     }
 
-    public List<Vehicle> getAll() {
-        List<Vehicle> l = new ArrayList<>();
-        l.add(v);
-        return l;
+    public Collection<Vehicle> getAll() {
+        return Collections.list(Collections.enumeration(vehicles.values()));
     }
 
     public void update(Vehicle newVehicle) {
-
+        int newId = newVehicle.getId();
+        if(vehicles.containsKey(newId)) {
+            vehicles.put(newId, newVehicle);
+        } else {
+            throw new NoSuchElementException("vehicle id " + newId + " doesn't exist");
+        }
     }
 
     public Vehicle create(Vehicle vehicle) {
-        return v;
+        boolean created = false;
+        while(!created) {
+            vehicle.setId(++currentId);
+            created = (vehicles.putIfAbsent(vehicle.getId(), vehicle) == null);
+        }
+        return vehicle;
     }
 
-    public void delete(int id) {
-
+    public boolean delete(int id) {
+        return vehicles.remove(id) != null;
     }
 }

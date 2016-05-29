@@ -1,8 +1,5 @@
 package com.tanviprojects.codingchallenge.vehicleservice.model;
 
-/**
- * Created by tanviapte on 5/28/16.
- */
 public class Vehicle {
     private int id;
     private int year;
